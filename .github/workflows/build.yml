@@ -56,8 +56,9 @@ jobs:
       - name: Create zip (Windows)
         if: runner.os == 'Windows'
         run: |
-          cd artifact
+          Push-Location artifact
           Compress-Archive -Path * -DestinationPath ..\${{ matrix.artifact_name }}.zip
+          Pop-Location
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4

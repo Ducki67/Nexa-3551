@@ -1,14 +1,14 @@
 import { readdir } from "fs/promises";
-import { join, dirname } from "path";
 import { Hono } from "hono";
 import logger from "../logger/logger";
-import { fileURLToPath } from "url";
+import { join, dirname, resolve } from "path";
+
 
 function getBaseDir(): string {
-    if (typeof Bun !== "undefined" && Bun.main) {
-        return dirname(Bun.main);
+    if (typeof process.execPath !== "undefined" && process.execPath.includes("index")) {
+        return dirname(process.execPath);
     }
-    return dirname(fileURLToPath(import.meta.url));
+    return resolve(__dirname, "../..");
 }
 
 async function loadRoute(directory: string, file: string, app: Hono): Promise<void> {
