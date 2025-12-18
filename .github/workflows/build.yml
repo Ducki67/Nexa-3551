@@ -42,11 +42,13 @@ jobs:
 
       - name: Copy executable (Linux/macOS)
         if: runner.os != 'Windows'
-        run: cp index${{ matrix.executable_ext }} artifact/
+        run: cp $(ls | grep -E ".*${{ matrix.executable_ext }}$") artifact/
 
       - name: Copy executable (Windows)
         if: runner.os == 'Windows'
-        run: Copy-Item .\index${{ matrix.executable_ext }} artifact\
+        run: |
+          $exe = Get-ChildItem -Path . -Filter "*${{ matrix.executable_ext }}" | Select-Object -First 1
+          Copy-Item $exe.FullName artifact\
 
       - name: Create zip (Linux/macOS)
         if: runner.os != 'Windows'
