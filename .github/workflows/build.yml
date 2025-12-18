@@ -34,43 +34,30 @@ jobs:
       - name: Install dependencies
         run: bun install
 
+      - name: Generate bundled index
+        run: bun run build.ts
+
       - name: Build executable
-        run: bun build ./src/index.ts --compile --outfile src/nexa${{ matrix.executable_ext }}
+        run: bun build ./src/index.bundled.ts --compile --outfile nexa${{ matrix.executable_ext }}
 
       - name: Create artifact directory
         run: mkdir -p artifact
 
-      - name: Copy files (Linux/macOS)
+      - name: Copy executable and static folder (Linux/macOS)
         if: runner.os != 'Windows'
         run: |
+          cp nexa${{ matrix.executable_ext }} artifact/
           cp -r static artifact/
-          cp -r src artifact/
-          cp package.json artifact/
-          cp README.md artifact/
 
-      - name: Copy files (Windows)
+      - name: Copy executable and static folder (Windows)
         if: runner.os == 'Windows'
         run: |
+          Copy-Item nexa${{ matrix.executable_ext }} artifact/
           Copy-Item -Recurse static artifact/
-          Copy-Item -Recurse src artifact/
-          Copy-Item package.json artifact/
-          Copy-Item README.md artifact/
-
-      - name: Create zip (Linux/macOS)
-        if: runner.os != 'Windows'
-        run: |
-          cd artifact
-          zip -r ../${{ matrix.artifact_name }}.zip .
-
-      - name: Create zip (Windows)
-        if: runner.os == 'Windows'
-        run: |
-          cd artifact
-          Compress-Archive -Path * -DestinationPath ../${{ matrix.artifact_name }}.zip
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact_name }}
-          path: ${{ matrix.artifact_name }}.zip
+          path: artifact/
           retention-days: 30
