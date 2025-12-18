@@ -26,6 +26,9 @@ jobs:
           bun-version: latest
 
       - name: Install dependencies
+        run: bun install --production --no-save
+
+      - name: Install all dependencies including optional
         run: bun install
 
       - name: Build executable
