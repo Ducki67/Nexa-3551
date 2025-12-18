@@ -44,13 +44,20 @@ jobs:
           $exe = Get-ChildItem -Path . -Filter "*${{ matrix.executable_ext }}" | Select-Object -First 1
           Copy-Item $exe.FullName artifact\
 
+      - name: Copy src and static folders
+        run: |
+          cp -r src artifact/
+          cp -r static artifact/
+
       - name: Create zip (Linux/macOS)
         if: runner.os != 'Windows'
         run: zip -r ${{ matrix.artifact_name }}.zip artifact/*
 
       - name: Create zip (Windows)
         if: runner.os == 'Windows'
-        run: Compress-Archive -Path artifact\* -DestinationPath ${{ matrix.artifact_name }}.zip
+        run: |
+          cd artifact
+          Compress-Archive -Path * -DestinationPath ..\${{ matrix.artifact_name }}.zip
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
