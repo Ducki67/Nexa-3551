@@ -1,0 +1,80 @@
+name: Build and Release
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            artifact_name: nexa-linux
+            executable_ext: ""
+          - os: windows-latest
+            artifact_name: nexa-windows
+            executable_ext: ".exe"
+          - os: macos-latest
+            artifact_name: nexa-macos
+            executable_ext: ""
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build executable
+        run: bun build ./src/index.ts --compile --minify --sourcemap --outfile nexa${{ matrix.executable_ext }}
+
+      - name: Create artifact directory
+        run: mkdir -p artifact
+
+      - name: Copy files (Linux/macOS)
+        if: runner.os != 'Windows'
+        run: |
+          cp nexa${{ matrix.executable_ext }} artifact/
+          cp -r static artifact/
+          cp -r src artifact/
+          cp package.json artifact/
+          cp README.md artifact/
+
+      - name: Copy files (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          Copy-Item nexa${{ matrix.executable_ext }} artifact/
+          Copy-Item -Recurse static artifact/
+          Copy-Item -Recurse src artifact/
+          Copy-Item package.json artifact/
+          Copy-Item README.md artifact/
+
+      - name: Create zip (Linux/macOS)
+        if: runner.os != 'Windows'
+        run: |
+          cd artifact
+          zip -r ../${{ matrix.artifact_name }}.zip .
+
+      - name: Create zip (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          cd artifact
+          Compress-Archive -Path * -DestinationPath ../${{ matrix.artifact_name }}.zip
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: ${{ matrix.artifact_name }}.zip
+          retention-days: 30
