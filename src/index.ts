@@ -20,7 +20,7 @@ app.use(async (c, next) => {
   }
 });
 
-await loadRoutes(path.join(__dirname, "routes"), app);
+await loadRoutes(path.join("src", "routes"), app);
 
 logger.backend("Nexa started on port 5353");
 
