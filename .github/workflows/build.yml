@@ -49,20 +49,9 @@ jobs:
           cp -r src artifact/
           cp -r static artifact/
 
-      - name: Create zip (Linux/macOS)
-        if: runner.os != 'Windows'
-        run: zip -r ${{ matrix.artifact_name }}.zip artifact/*
-
-      - name: Create zip (Windows)
-        if: runner.os == 'Windows'
-        run: |
-          Push-Location artifact
-          Compress-Archive -Path * -DestinationPath ..\${{ matrix.artifact_name }}.zip
-          Pop-Location
-
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact_name }}
-          path: ${{ matrix.artifact_name }}.zip
+          path: artifact/
           retention-days: 30
