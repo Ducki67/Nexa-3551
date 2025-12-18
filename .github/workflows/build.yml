@@ -2,9 +2,7 @@ name: Build and Release
 
 on:
   push:
-    branches: [ main, master ]
   pull_request:
-    branches: [ main, master ]
   workflow_dispatch:
 
 jobs:
@@ -37,7 +35,7 @@ jobs:
         run: bun install
 
       - name: Build executable
-        run: bun build ./src/index.ts --compile --minify --sourcemap --outfile nexa${{ matrix.executable_ext }}
+        run: bun build ./src/index.ts --compile --minify --sourcemap --outfile src/nexa${{ matrix.executable_ext }}
 
       - name: Create artifact directory
         run: mkdir -p artifact
@@ -45,7 +43,6 @@ jobs:
       - name: Copy files (Linux/macOS)
         if: runner.os != 'Windows'
         run: |
-          cp nexa${{ matrix.executable_ext }} artifact/
           cp -r static artifact/
           cp -r src artifact/
           cp package.json artifact/
@@ -54,7 +51,6 @@ jobs:
       - name: Copy files (Windows)
         if: runner.os == 'Windows'
         run: |
-          Copy-Item nexa${{ matrix.executable_ext }} artifact/
           Copy-Item -Recurse static artifact/
           Copy-Item -Recurse src artifact/
           Copy-Item package.json artifact/
