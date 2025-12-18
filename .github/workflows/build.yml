@@ -35,7 +35,7 @@ jobs:
         run: bun install
 
       - name: Build executable
-        run: bun build ./src/index.ts --compile 
+        run: bun build ./src/index.ts --compile
 
       - name: Create artifact directory
         run: mkdir -p artifact
@@ -47,6 +47,7 @@ jobs:
           cp -r src artifact/
           cp package.json artifact/
           cp README.md artifact/
+          cp index${{ matrix.executable_ext }} artifact/
 
       - name: Copy files (Windows)
         if: runner.os == 'Windows'
@@ -55,18 +56,17 @@ jobs:
           Copy-Item -Recurse src artifact/
           Copy-Item package.json artifact/
           Copy-Item README.md artifact/
+          Copy-Item .\index${{ matrix.executable_ext }} artifact\
 
       - name: Create zip (Linux/macOS)
         if: runner.os != 'Windows'
         run: |
-          cd artifact
-          zip -r ../${{ matrix.artifact_name }}.zip .
+          zip -r ${{ matrix.artifact_name }}.zip artifact/*
 
       - name: Create zip (Windows)
         if: runner.os == 'Windows'
         run: |
-          cd artifact
-          Compress-Archive -Path * -DestinationPath ../${{ matrix.artifact_name }}.zip
+          Compress-Archive -Path artifact\* -DestinationPath ${{ matrix.artifact_name }}.zip
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
