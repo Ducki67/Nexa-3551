@@ -10,17 +10,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [windows-latest]
         include:
-          - os: ubuntu-latest
-            artifact_name: nexa-linux
-            executable_ext: ""
           - os: windows-latest
             artifact_name: nexa-windows
             executable_ext: ".exe"
-          - os: macos-latest
-            artifact_name: nexa-macos
-            executable_ext: ""
 
     steps:
       - name: Checkout code
