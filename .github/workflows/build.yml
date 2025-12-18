@@ -35,7 +35,7 @@ jobs:
         run: bun install
 
       - name: Build executable
-        run: bun build ./src/index.ts --compile --minify --sourcemap --outfile src/nexa${{ matrix.executable_ext }}
+        run: bun build ./src/index.ts --compile --outfile src/nexa${{ matrix.executable_ext }}
 
       - name: Create artifact directory
         run: mkdir -p artifact
