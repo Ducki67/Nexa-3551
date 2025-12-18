@@ -44,10 +44,11 @@ jobs:
           $exe = Get-ChildItem -Path . -Filter "*${{ matrix.executable_ext }}" | Select-Object -First 1
           Copy-Item $exe.FullName artifact\
 
-      - name: Copy src and static folders
+      - name: Copy src, static, and node_modules folders
         run: |
           cp -r src artifact/
           cp -r static artifact/
+          cp -r node_modules artifact/
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
