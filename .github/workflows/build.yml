@@ -40,33 +40,21 @@ jobs:
       - name: Create artifact directory
         run: mkdir -p artifact
 
-      - name: Copy files (Linux/macOS)
+      - name: Copy executable (Linux/macOS)
         if: runner.os != 'Windows'
-        run: |
-          cp -r static artifact/
-          cp -r src artifact/
-          cp package.json artifact/
-          cp README.md artifact/
-          cp index${{ matrix.executable_ext }} artifact/
+        run: cp index${{ matrix.executable_ext }} artifact/
 
-      - name: Copy files (Windows)
+      - name: Copy executable (Windows)
         if: runner.os == 'Windows'
-        run: |
-          Copy-Item -Recurse static artifact/
-          Copy-Item -Recurse src artifact/
-          Copy-Item package.json artifact/
-          Copy-Item README.md artifact/
-          Copy-Item .\index${{ matrix.executable_ext }} artifact\
+        run: Copy-Item .\index${{ matrix.executable_ext }} artifact\
 
       - name: Create zip (Linux/macOS)
         if: runner.os != 'Windows'
-        run: |
-          zip -r ${{ matrix.artifact_name }}.zip artifact/*
+        run: zip -r ${{ matrix.artifact_name }}.zip artifact/*
 
       - name: Create zip (Windows)
         if: runner.os == 'Windows'
-        run: |
-          Compress-Archive -Path artifact\* -DestinationPath ${{ matrix.artifact_name }}.zip
+        run: Compress-Archive -Path artifact\* -DestinationPath ${{ matrix.artifact_name }}.zip
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
