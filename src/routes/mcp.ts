@@ -3,6 +3,8 @@ import app from "..";
 import fs from "node:fs";
 import path from "node:path";
 import { v4 as uuidv4 } from "uuid";
+import getVersion from "../utils/handlers/getVersion";
+import { Nexa } from "../utils/handlers/errors";
 
 const userpath = new Set();
 const profilesDir = path.join(__dirname, "..", "..", "static", "profiles");
@@ -13,6 +15,7 @@ export default function (app: Hono) {
     async (c) => {
       const body = await c.req.json();
       let MultiUpdate: any = [];
+      let Notifications: any = [];
       let profileChanges: any = [];
       let BaseRevision = 0;
       let profile: any;
@@ -104,6 +107,158 @@ export default function (app: Hono) {
           break;
         case "RefreshExpeditions":
           break;
+        case "PurchaseCatalogEntry":
+          {
+            const useragent: any = c.req.header("user-agent");
+            if (!useragent) return c.json(Nexa.internal.invalidUserAgent);
+            const ver = getVersion(c);
+
+            const { offerId, purchaseQuantity, currency, currencySubType, expectedTotalPrice, gameContext } = await c.req.json();
+
+            function findOffer(offerId: any) {
+              let shop: any = {};
+              switch (true) {
+                case ver.build >= 30.1:
+                  {
+                    shop = JSON.parse(
+                      fs.readFileSync(path.join(__dirname, "../../static/shop/v3.json"), "utf8"),
+                    ); // latest
+                    break;
+                  }
+                case ver.build >= 26.3:
+                  {
+                    shop = JSON.parse(
+                      fs.readFileSync(path.join(__dirname, "../../static/shop/v2.json"), "utf8"),
+                    );
+                    break;
+                  }
+                default:
+                  {
+                    shop = JSON.parse(
+                      fs.readFileSync(path.join(__dirname, "../../static/shop/v1.json"), "utf8"),
+                    ); // to build 26.2
+                    break;
+                  }
+              }
+
+              for (let storefront of shop.storefronts) {
+                let findOfferId = storefront.catalogEntries.find(
+                  (i: any) => i.offerId == offerId
+                );
+                if (findOfferId)
+                  return { name: storefront.name, offerId: findOfferId };
+              }
+            }
+
+            let findOfferId = findOffer(body.offerId) as any;
+            if (!findOfferId) return c.json(Nexa.storefront.invalidItem, 400);
+
+            let notification: any = {
+              type: "CatalogPurchase",
+              primary: true,
+              lootResult: {
+                items: [],
+              },
+            };
+
+            const athenaPath = path.join(accountProfilesDir, `profile_athena.json`);
+            const athena = JSON.parse(fs.readFileSync(athenaPath, "utf8"));
+
+            MultiUpdate.push({
+              profileRevision: athena.rvn || 0,
+              profileId: "athena",
+              profileChangesBaseRevision: athena.rvn || 0,
+              profileChanges: [],
+              profileCommandRevision: athena.commandRevision || 0,
+            });
+            
+            for (let value of findOfferId.offerId.itemGrants) {
+              const ID = uuidv4();
+
+              let itemExists = Object.values(athena.items).some(
+                (item: any) =>
+                  item && item.templateId && item.templateId.toLowerCase() === value.templateId.toLowerCase()
+              );
+
+              if (itemExists) return c.json(Nexa.storefront.alreadyOwned, 400);
+              let variants: any = [];
+
+              const Item = {
+                templateId: value.templateId,
+                attributes: {
+                  item_seen: false,
+                  variants: variants,
+                },
+                quantity: 1,
+              };
+
+              athena.items[ID] = Item;
+
+              MultiUpdate[0].profileChanges.push({
+                changeType: "itemAdded",
+                itemId: ID,
+                item: athena.items[ID],
+              });
+
+              notification.lootResult.items.push({
+                itemType: Item.templateId,
+                itemGuid: ID,
+                itemProfile: "athena",
+                quantity: 1,
+              });
+            }
+
+            Notifications.push(notification);
+
+            if (findOfferId.offerId.prices[0].currencyType.toLowerCase() === "mtxcurrency") {
+              let paid = false;
+
+              for (let key in profile.items) {
+                if (!profile.items[key].templateId.toLowerCase().startsWith("currency:mtx"))
+                  continue;
+
+                let currencyPlatform = profile.items[key].attributes.platform;
+                if (currencyPlatform.toLowerCase() !== profile.stats.attributes.current_mtx_platform.toLowerCase() && currencyPlatform.toLowerCase() !== "shared")
+                  continue;
+
+                if (profile.items[key].quantity < findOfferId.offerId.prices[0].finalPrice)
+                  return c.json(Nexa.storefront.currencyInsufficient, 400);
+
+                profile.items[key].quantity -= findOfferId.offerId.prices[0].finalPrice;
+
+                profileChanges.push({
+                  changeType: "itemQuantityChanged",
+                  itemId: key,
+                  quantity: profile.items[key].quantity,
+                });
+
+                paid = true;
+                break;
+              }
+
+              if (!paid && findOfferId.offerId.prices[0].finalPrice > 0)
+                return c.json(Nexa.storefront.currencyInsufficient, 400);
+
+              if (MultiUpdate[0].profileChanges.length > 0) {
+                athena.rvn += 1;
+                athena.commandRevision += 1;
+                athena.updated = new Date().toISOString();
+
+                MultiUpdate[0].profileRevision = athena.rvn;
+                MultiUpdate[0].profileCommandRevision = athena.commandRevision;
+              }
+            }
+
+            if (profileChanges.length > 0) {
+              athena.rvn += 1;
+              athena.commandRevision += 1;
+              athena.updated = new Date().toISOString();
+
+              fs.writeFileSync(athenaPath, JSON.stringify(athena, null, 2));
+            }
+
+            break;
+          }
         case "SetAffiliateName":
           const { affiliateName } = await c.req.json();
           profile.stats.attributes.mtx_affiliate_set_time =
@@ -537,6 +692,7 @@ export default function (app: Hono) {
         profileId: query.profileId,
         profileChangesBaseRevision: BaseRevision,
         profileChanges: profileChanges,
+        notifications: Notifications,
         profileCommandRevision: profile ? profile.commandRevision || 0 : 0,
         serverTime: new Date().toISOString(),
         multiUpdate: MultiUpdate,
