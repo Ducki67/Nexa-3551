@@ -79,7 +79,8 @@ bun run src/index.ts
 
 Used APIs:
 
-- <img src="https://api.nitestats.com/v1/static/ns-logo.png" width="15" alt="NiteStats logo"> [NiteStats API](https://nitestats.com/)
+- <img src="https://api.nitestats.com/v1/static/ns-logo.png" width="23" alt="NiteStats logo"> [NiteStats API](https://nitestats.com/)
+
 
 ## Credits
 

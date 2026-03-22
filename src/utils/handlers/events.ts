@@ -13,6 +13,18 @@ function createEvent(eventType: any) {
 }
 
 function getEvents(ver: any) {
+  // reload config each call so runtime toggles take effect
+    const rawConfig = ini.parse(fs.readFileSync(path.join(__dirname, "../../config/config.ini"), "utf-8"));
+    // prefer values from [TimeLine] section when present
+    const timeline = rawConfig.TimeLine || rawConfig.TimeLine || rawConfig;
+    const localConfig = {
+      RufusStage: parseInt(timeline.RufusStage) || parseInt(rawConfig.RufusStage) || 1,
+      WaterLevel: parseInt(timeline.WaterLevel) || parseInt(rawConfig.WaterLevel) || 1,
+      UseWaterStorm:
+        (timeline.UseWaterStorm === 'true' || timeline.UseWaterStorm === 'True' || timeline.UseWaterStorm === true || timeline.WaterStorm === 'true' || timeline.WaterStorm === 'True' || timeline.WaterStorm === true)
+        || (rawConfig.UseWaterStorm === 'true' || rawConfig.UseWaterStorm === 'True' || rawConfig.UseWaterStorm === true || rawConfig.WaterStorm === 'true' || rawConfig.WaterStorm === 'True' || rawConfig.WaterStorm === true),
+    };
+
   let events = [
     createEvent(`EventFlag.Season${ver.season}`),
     createEvent(`EventFlag.${ver.lobby}`),
@@ -97,29 +109,38 @@ function getEvents(ver: any) {
   }
 
   if (ver.build == 12.61) {
-    events.push(createEvent("FLA01"));
+    // Atlas pushes a set of water-storm related events when enabled
+      if (localConfig.UseWaterStorm) {
+      events.push(createEvent("EventFlag.FSGA01"));
+      events.push(createEvent("FSGA01"));
+      events.push(createEvent("FLA02"));
+      events.push(createEvent("FLA01"));
+      events.push(createEvent("FKD"));
+    } else {
+      events.push(createEvent("FLA01"));
+    }
   }
 
   if (ver.season == 13) {
-    if (config.WaterLevel == 1) {
+      if (localConfig.WaterLevel == 1) {
       events.push(createEvent("WL1"));
     }
-    if (config.WaterLevel == 2) {
+      if (localConfig.WaterLevel == 2) {
       events.push(createEvent("WL2"));
     }
-    if (config.WaterLevel == 3) {
+      if (localConfig.WaterLevel == 3) {
       events.push(createEvent("WL3"));
     }
-    if (config.WaterLevel == 4) {
+      if (localConfig.WaterLevel == 4) {
       events.push(createEvent("WL4"));
     }
-    if (config.WaterLevel == 5) {
+      if (localConfig.WaterLevel == 5) {
       events.push(createEvent("WL5"));
     }
-    if (config.WaterLevel == 6) {
+      if (localConfig.WaterLevel == 6) {
       events.push(createEvent("WL6"));
     }
-    if (config.WaterLevel == 7) {
+      if (localConfig.WaterLevel == 7) {
       events.push(createEvent("WL7"));
     }
   }

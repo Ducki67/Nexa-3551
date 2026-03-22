@@ -120,6 +120,123 @@
                 "linkCode": "playlist_defaultsquad",
                 "isFavorite": false
               }
+              ,
+              {
+                "linkData": {
+                  "namespace": "fn",
+                  "mnemonic": "set_arena_playlists",
+                  "linkType": "ModeSet",
+                  "active": true,
+                  "disabled": false,
+                  "version": 1,
+                  "moderationStatus": "Unmoderated",
+                  "accountId": "epic",
+                  "creatorName": "Epic",
+                  "descriptionTags": [],
+                  "metadata": {
+                    "image_url": "https://i.imgur.com/0SJtgwA.png",
+                    "matchmaking": {},
+                    "title": "Arena",
+                    "sub_link_codes": [
+                      "playlist_showdownalt_solo",
+                      "playlist_showdownalt_duos",
+                      "playlist_showdownalt_trios"
+                    ]
+                  }
+                },
+                "lastVisited": null,
+                "linkCode": "set_arena_playlists",
+                "isFavorite": false
+              },
+              {
+                "linkData": {
+                  "namespace": "fn",
+                  "mnemonic": "playlist_showdownalt_solo",
+                  "linkType": "BR:Playlist",
+                  "active": true,
+                  "disabled": false,
+                  "version": 95,
+                  "moderationStatus": "Unmoderated",
+                  "accountId": "epic",
+                  "creatorName": "Epic",
+                  "descriptionTags": [],
+                  "metadata": {
+                    "parent_set": "set_arena_playlists",
+                    "image_url": "https://i.imgur.com/0SJtgwA.png",
+                    "image_urls": {
+                      "url_s": "https://i.imgur.com/0SJtgwA.png",
+                      "url_xs": "https://i.imgur.com/0SJtgwA.png",
+                      "url_m": "https://i.imgur.com/0SJtgwA.png",
+                      "url": "https://i.imgur.com/0SJtgwA.png"
+                    },
+                    "matchmaking": {
+                      "override_playlist": "playlist_showdownalt_solo"
+                    }
+                  }
+                },
+                "lastVisited": null,
+                "linkCode": "playlist_showdownalt_solo",
+                "isFavorite": false
+              }
+              ,
+              {
+                "linkData": {
+                  "namespace": "fn",
+                  "mnemonic": "playlist_showdownalt_duos",
+                  "linkType": "BR:Playlist",
+                  "active": true,
+                  "disabled": false,
+                  "version": 95,
+                  "moderationStatus": "Unmoderated",
+                  "accountId": "epic",
+                  "creatorName": "Epic",
+                  "descriptionTags": [],
+                    "metadata": {
+                      "image_url": "https://i.imgur.com/0SJtgwA.png",
+                      "image_urls": {
+                        "url_s": "https://i.imgur.com/0SJtgwA.png",
+                        "url_xs": "https://i.imgur.com/0SJtgwA.png",
+                        "url_m": "https://i.imgur.com/0SJtgwA.png",
+                        "url": "https://i.imgur.com/0SJtgwA.png"
+                      },
+                      "matchmaking": {
+                        "override_playlist": "playlist_showdownalt_duos"
+                      }
+                    }
+                },
+                "lastVisited": null,
+                "linkCode": "playlist_showdownalt_duos",
+                "isFavorite": false
+              },
+              {
+                "linkData": {
+                  "namespace": "fn",
+                  "mnemonic": "playlist_showdownalt_trios",
+                  "linkType": "BR:Playlist",
+                  "active": true,
+                  "disabled": false,
+                  "version": 95,
+                  "moderationStatus": "Unmoderated",
+                  "accountId": "epic",
+                  "creatorName": "Epic",
+                  "descriptionTags": [],
+                    "metadata": {
+                      "image_url": "https://i.imgur.com/0SJtgwA.png",
+                      "image_urls": {
+                        "url_s": "https://i.imgur.com/0SJtgwA.png",
+                        "url_xs": "https://i.imgur.com/0SJtgwA.png",
+                        "url_m": "https://i.imgur.com/0SJtgwA.png",
+                        "url": "https://i.imgur.com/0SJtgwA.png"
+                      },
+                      "matchmaking": {
+                        "override_playlist": "playlist_showdownalt_trios"
+                      }
+                    }
+                },
+                "lastVisited": null,
+                "linkCode": "playlist_showdownalt_trios",
+                "isFavorite": false
+              }
             ],
             "hasMore": false
           }     

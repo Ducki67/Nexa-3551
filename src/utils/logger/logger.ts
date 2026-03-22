@@ -1,20 +1,43 @@
 import chalk from "chalk";
 
+function timestamp() {
+  return chalk.gray(new Date().toISOString());
+}
+
+function padLabel(label: string, width = 7) {
+  const s = label.toUpperCase();
+  if (s.length >= width) return s;
+  const pad = Math.max(0, width - s.length);
+  return s + " ".repeat(pad);
+}
+
+function formatArgs(args: unknown[]) {
+  return args.map((arg) => (typeof arg === "string" ? arg : JSON.stringify(arg))).join(" ");
+}
+
 export default {
-  backend(...messages: string[]) {
-    console.log(`\x1b[37m[\x1b[96mBACKEND\x1b[0m\x1b[37m]`, ...messages);
+  backend(...messages: unknown[]) {
+    const label = chalk.bgBlue.black(` ${padLabel("BACKEND")} `);
+    console.log(`${timestamp()} ${label} ${chalk.cyan(formatArgs(messages))}`);
   },
 
-  debug(...messages: string[]) {
-    console.log(`\x1b[37m[\x1b[36mDEBUG\x1b[0m\x1b[37m]`, ...messages);
+  debug(...messages: unknown[]) {
+    const label = chalk.bgWhite.black(` ${padLabel("DEBUG")} `);
+    console.log(`${timestamp()} ${label} ${chalk.magenta(formatArgs(messages))}`);
   },
 
-  error: (...args: unknown[]) => {
-    console.log(
-      chalk.bgRed(" ERROR "),
-      ...args.map((arg) =>
-        typeof arg === "string" ? chalk.gray(arg) : chalk.gray(JSON.stringify(arg)),
-      ),
-    );
+  info(...messages: unknown[]) {
+    const label = chalk.bgGreen.black(` ${padLabel("INFO")} `);
+    console.log(`${timestamp()} ${label} ${chalk.green(formatArgs(messages))}`);
+  },
+
+  warn(...messages: unknown[]) {
+    const label = chalk.bgYellow.black(` ${padLabel("WARN")} `);
+    console.log(`${timestamp()} ${label} ${chalk.yellow(formatArgs(messages))}`);
+  },
+
+  error(...args: unknown[]) {
+    const label = chalk.bgRed.white(` ${padLabel("ERROR")} `);
+    console.log(`${timestamp()} ${label} ${chalk.red(formatArgs(args))}`);
   },
 };

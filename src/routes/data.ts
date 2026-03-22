@@ -23,6 +23,7 @@ export default function (app: Hono) {
                 hidden: false,
                 _type: "CommonUI Simple Message Base",
                 subgame: "br",
+                image: "https://i.imgur.com/4r9OYif.jpeg",
                 body: "Made by andr1ww \nDiscord: http://discord.gg/stellarfn",
                 title: "Nexa",
                 spotlight: false,
@@ -65,10 +66,8 @@ export default function (app: Hono) {
             motds: [
               {
                 entryType: "Website",
-                image:
-                  "https://media.discordapp.net/attachments/1241535588394471545/1251931646555324426/Izdelek_brez_naslova_33.png?ex=66705fb4&is=666f0e34&hm=730eb730ea6523eabe6ec8956c9d1fcb06719189f0dbf76358c1f9c55b366143&=&format=webp&quality=lossless&width=1200&height=389",
-                tileImage:
-                  "https://media.discordapp.net/attachments/1241535588394471545/1251931646555324426/Izdelek_brez_naslova_33.png?ex=66705fb4&is=666f0e34&hm=730eb730ea6523eabe6ec8956c9d1fcb06719189f0dbf76358c1f9c55b366143&=&format=webp&quality=lossless&width=1200&height=389",
+                image: "https://i.imgur.com/4r9OYif.jpeg",
+                tileImage: "https://i.imgur.com/4r9OYif.jpeg",
                 videoMute: false,
                 hidden: false,
                 tabTitleOverride: "Nexa",

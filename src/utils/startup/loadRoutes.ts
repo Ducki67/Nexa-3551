@@ -22,7 +22,9 @@ export async function loadRoutes(directory: string, app: Hono): Promise<void> {
     try {
         const routesPath = join(process.cwd(), directory);
 
-        logger.debug(`Loading routes from: ${routesPath}`);
+        if (process.env.SHOW_ROUTE_DEBUG === '1') {
+            logger.debug(`Loading routes from: ${routesPath}`);
+        }
 
         const files = await readdir(routesPath);
         const routedFiles = files.filter((name) => name.endsWith(".ts") || name.endsWith(".js"));

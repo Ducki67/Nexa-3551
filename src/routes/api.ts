@@ -1,6 +1,7 @@
 import axios from "axios";
 import path from "node:path";
 import fs from "node:fs";
+import getVersion from "../utils/handlers/getVersion";
 import type { Hono } from "hono";
 
 export default function (app: Hono) {
@@ -199,6 +200,11 @@ export default function (app: Hono) {
     return c.text("true");
   });
 
+  // Some clients call GET /region to check region availability — return allowed
+  app.get("/region", async (c) => {
+    return c.json({ allowed: true, resolved: true, limit: "Res=656" });
+  });
+
   app.get("/fortnite/api/v2/versioncheck/*", async (c) => {
     return c.json({
       type: "NO_UPDATE",
@@ -223,6 +229,12 @@ export default function (app: Hono) {
     return c.text("true");
   });
 
+  // Some clients call this endpoint to check whether specific link codes are locked.
+  // Return an empty object (no locks) so playlists are not shown as locked.
+  app.post("/api/v1/links/lock-status/ssd/check", async (c) => {
+    return c.json({});
+  });
+
   app.get("/socialban/api/public/v1/:accountId", async (c) => {
     return c.json({});
   });
@@ -239,15 +251,31 @@ export default function (app: Hono) {
   });
 
   app.get("/content-controls/:accountId", async (c) => {
-    return c.json({});
+    try {
+      const ver = getVersion ? getVersion(c) : null;
+      // For newer clients we explicitly return controls disabled to avoid parental gating
+      return c.json({
+        data: {
+          ageGate: 0,
+          controlsEnabled: false,
+          maxEpicProfilePrivacy: "none",
+          principalId: c.req.param("accountId"),
+          season: ver ? ver.season : undefined,
+        },
+      });
+    } catch (e) {
+      return c.json({ data: { ageGate: 0, controlsEnabled: false, maxEpicProfilePrivacy: "none", principalId: c.req.param("accountId") } });
+    }
   });
 
   app.get("/content-controls/:accountId/rules/namespaces/fn", async (c) => {
-    return c.json({});
+    // return empty rules array (no restrictions)
+    return c.json([]);
   });
 
   app.post("/content-controls/:accountId/verify-pin", async (c) => {
-    return c.json({});
+    // always accept pin checks locally
+    return c.json({ data: { pinCorrect: true } });
   });
 
   app.get("/api/v2/interactions/aggregated/Fortnite/:accountId", async (c) => {

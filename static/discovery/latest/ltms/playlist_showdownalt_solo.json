@@ -1,0 +1,51 @@
+{
+    "namespace": "fn",
+    "accountId": "epic",
+    "creatorName": "Epic",
+    "mnemonic": "playlist_showdownalt_solo",
+    "linkType": "BR:Playlist",
+    "metadata": {
+        "parent_set": "set_arena_playlists",
+        "favorite_override": "set_arena_playlists",
+        "play_history_override": "set_arena_playlists",
+        "alt_title": {
+            "de": "Showdown",
+            "ru": "Шоудаун",
+            "ko": "쇼다운",
+            "pt-BR": "Showdown",
+            "en": "Showdown Alt",
+            "it": "Showdown",
+            "fr": "Showdown",
+            "zh-CN": "",
+            "es": "Showdown",
+            "es-MX": "Showdown",
+            "zh": "",
+            "ar": "شو داون",
+            "zh-Hant": "",
+            "ja": "ショーダウン",
+            "pl": "Showdown",
+            "es-419": "Showdown",
+            "tr": "Showdown"
+        },
+        "image_url": "https://i.imgur.com/0SJtgwA.png",
+        "product_tag": "Product.BR.Build.Showdown",
+        "image_urls": {
+            "url_s": "https://i.imgur.com/0SJtgwA.png",
+            "url_xs": "https://i.imgur.com/0SJtgwA.png",
+            "url_m": "https://i.imgur.com/0SJtgwA.png",
+            "url": "https://i.imgur.com/0SJtgwA.png"
+        },
+        "matchmaking": {
+            "override_playlist": "playlist_showdownalt_solo"
+        },
+        "video_vuid": "",
+        "title": "Showdown Alt"
+    },
+    "version": 95,
+    "active": true,
+    "disabled": false,
+    "created": "2024-01-01T00:00:00.000Z",
+    "published": "2024-01-01T00:00:00.000Z",
+    "descriptionTags": [],
+    "moderationStatus": "Unmoderated"
+}

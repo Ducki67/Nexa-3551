@@ -1,44 +1,192 @@
-import app from "..";
-import jwt from "jsonwebtoken";
-import getVersion from "../utils/handlers/getVersion";
-import type { Hono } from "hono";
+import { Hono } from "hono";
+import { getConnInfo } from "hono/bun";
+import { v4 as uuid } from "uuid";
+import { sendError } from "../utils/senderror.ts";
+import logger from "../utils/logger/logger.ts";
+import config from "../utils/config";
 
-export default function (app: Hono) {
-  app.get("/waitingroom/api/waitingroom", async (c) => {
-    return c.json([]);
-  });
-  app.get("/fortnite/api/matchmaking/session/findPlayer/:id", async (c) => {
-    return c.json([]);
-  });
+const matchmakingMap = new Map<string, [string, number, number]>();
 
-  app.get("/fortnite/api/game/v2/matchmakingservice/ticket/player/*", async (c) => {
-    const bucketId: any = c.req.query("bucketId");
-    const playerMatchmakingKey = c.req.query("player.option.customKey");
-    const playerPlaylist = bucketId.split(":")[3];
-    const playerRegion = bucketId.split(":")[2];
-    const ver = getVersion(c);
+export default (app: Hono) => {
+  app.get(
+    "/fortnite/api/game/v2/matchmakingservice/ticket/player/:accountId",
+    (c) => {
+      const bucketId = c.req.query("bucketId");
+      let userIp = getConnInfo(c).remote.address!;
+      if (userIp.startsWith("::ffff:")) {
+        userIp = userIp.replace("::ffff:", "");
+      }
 
-    const mmData = jwt.sign(
-      {
-        region: playerRegion,
-        playlist: playerPlaylist,
-        type: typeof playerMatchmakingKey === "string" ? "custom" : "normal",
-        key: typeof playerMatchmakingKey === "string" ? playerMatchmakingKey : undefined,
-        bucket: bucketId,
-        version: `${ver.build}`,
-      },
-      "LVe51Izk03lzceNf1ZGZs0glGx5tKh7f",
-    );
-    var data = mmData.split(".");
+      const mmCode = c.req.query("player.option.customKey");
+      let ip: string | undefined = String(config.get("MatchMakerService.GameServerIp") || config.get("MatchMakerService.GameServerIp") || process.env.GAMESERVER_IP || "").split(":")[0];
+      let port: number | undefined = (String(config.get("MatchMakerService.GameServerIp") || process.env.GAMESERVER_IP || "").split(":")[1] ? Number(String(config.get("MatchMakerService.GameServerIp") || process.env.GAMESERVER_IP).split(":")[1]) : undefined);
+
+      if (typeof mmCode === "string") {
+        const ipPortRegex = /^(?:\d{1,3}\.){3}\d{1,3}:\d{1,5}$/;
+
+        if (!ipPortRegex.test(mmCode)) {
+          return sendError(
+            c,
+            "errors.common.matchmaker.invalid_matchmaking_code",
+            "Invalid matchmaking code format. Expected something like 192.168.1.69:7777.",
+            [],
+            400,
+            undefined,
+            400,
+          );
+        }
+
+        const [parsedIp, portStr] = mmCode.split(":");
+        const validIP = parsedIp!.split(".").every((n) => {
+          const num = Number(n);
+          return Number.isInteger(num) && num >= 0 && num <= 255;
+        });
+
+        const parsedPort = Number(portStr);
+        const validPort =
+          Number.isInteger(parsedPort) && parsedPort > 0 && parsedPort <= 65535;
+
+        if (!validIP || !validPort) {
+          return sendError(
+            c,
+            "errors.common.matchmaker.invalid_matchmaking_code",
+            "Invalid IP or port range in matchmaking code.",
+            [],
+            400,
+            undefined,
+            400,
+          );
+        }
+
+        ip = parsedIp;
+        port = parsedPort;
+      }
+
+      if (!ip || port === undefined) {
+        return sendError(
+          c,
+          "errors.common.matchmaker.gameserver_not_configured",
+          "Game server IP is not configured.",
+          [],
+          500,
+          undefined,
+          500,
+        );
+      }
+
+      matchmakingMap.set(userIp, [ip, port, parseInt(bucketId!.split(":")[0]!, 10)]);
+
+      const serviceUrl = String(config.get("MatchMakerService.MatchMakerIp") || config.get("MatchMakerIp") || process.env.MATCHMAKER_IP || "ws://127.0.0.1:110");
+
+      return c.json({
+        serviceUrl,
+        ticketType: "mms-player",
+        payload: Buffer.from(bucketId!.split(":")[0]!).toString("hex"),
+        signature: "razersig",
+      });
+    },
+  );
+
+  app.get("/fortnite/api/matchmaking/session/:sessionId", (c) => {
+    const sessionId = c.req.param("sessionId");
+    let userIp = getConnInfo(c).remote.address!;
+    if (userIp.startsWith("::ffff:")) userIp = userIp.replace("::ffff:", "");
+    const matchmakingSave = matchmakingMap.get(userIp);
+    if (!matchmakingSave)
+      return sendError(
+        c,
+        "errors.voltronite.matchmaking.invalid_save_data",
+        "invalid matchmaking data",
+        [],
+        2032,
+        undefined,
+        400,
+      );
+
+    const [serverAddress, serverPort, buildUniqueId] = matchmakingSave;
     return c.json({
-      serviceUrl: "ws://127.0.0.1:5555",
-      ticketType: "mms-player",
-      payload: data[0] + "." + data[1],
-      signature: undefined,
+      id: sessionId,
+      ownerId: uuid().replace(/-/g, ""),
+      ownerName: "[DS]fortnite-liveeugcec1c2e30ubrcore0a-z8hj-1968",
+      serverName: "[DS]fortnite-liveeugcec1c2e30ubrcore0a-z8hj-1968",
+      serverAddress,
+      serverPort,
+      maxPublicPlayers: 220,
+      openPublicPlayers: 175,
+      maxPrivatePlayers: 0,
+      openPrivatePlayers: 0,
+      attributes: {
+        REGION_s: "EU",
+        GAMEMODE_s: "FORTATHENA",
+        ALLOWBROADCASTING_b: true,
+        SUBREGION_s: "GB",
+        DCID_s: "FORTNITE-LIVEEUGCEC1C2E30UBRCORE0A-14840880",
+        tenant_s: "Fortnite",
+        MATCHMAKINGPOOL_s: "Any",
+        STORMSHIELDDEFENSETYPE_i: 0,
+        HOTFIXVERSION_i: 0,
+        PLAYLISTNAME_s: "Playlist_DefaultSolo",
+        SESSIONKEY_s: uuid().replace(/-/g, ""),
+        TENANT_s: "Fortnite",
+        BEACONPORT_i: 15009,
+        ALLOWMIGRATION_s: "false",
+        REJOINAFTERKICK_s: "OPEN",
+        CHECKSANCTIONS_s: "false",
+        BUCKET_s: "",
+        DEPLOYMENT_s: "Fortnite",
+        LASTUPDATED_s: new Date().toISOString(),
+        LINKID_s: "playlist_defaultsolo?v=95",
+        allowMigration_s: false,
+        ALLOWREADBYID_s: "false",
+        SERVERADDRESS_s: serverAddress,
+        NETWORKMODULE_b: true,
+        lastUpdated_s: new Date().toISOString(),
+        allowReadById_s: false,
+        serverAddress_s: serverAddress,
+        LINKTYPE_s: "BR:Playlist",
+        deployment_s: "Fortnite",
+        ADDRESS_s: serverAddress,
+        bucket_s: "",
+        checkSanctions_s: false,
+        rejoinAfterKick_s: "OPEN",
+      },
+      publicPlayers: [],
+      privatePlayers: [],
+      totalPlayers: 45,
+      allowJoinInProgress: false,
+      shouldAdvertise: false,
+      isDedicated: false,
+      usesStats: false,
+      allowInvites: false,
+      usesPresence: false,
+      allowJoinViaPresence: true,
+      allowJoinViaPresenceFriendsOnly: false,
+      buildUniqueId,
+      lastUpdated: new Date().toISOString(),
+      started: false,
     });
   });
 
-  app.post("/fortnite/api/matchmaking/session/:SessionId/join", async (c) => {
-    return c.json([]);
-  });
-}
+  app.get(
+    "/fortnite/api/game/v2/matchmaking/account/:accountId/session/:sessionId",
+    (c) => {
+      return c.json({
+        accountId: c.req.param("accountId"),
+        sessionId: c.req.param("sessionId"),
+        key: uuid().replace(/-/g, ""),
+      });
+    },
+  );
+
+  app.get("/fortnite/api/matchmaking/session/findPlayer/*", (c) =>
+    c.body(null, 204),
+  );
+
+  app.post("/fortnite/api/matchmaking/session/:sessionId/join", (c) =>
+    c.json([]),
+  );
+
+  app.post("/fortnite/api/matchmaking/session/matchMakingRequest", (c) =>
+    c.json([]),
+  );
+};

@@ -15,11 +15,14 @@
         "title": "Battle Royale",
         "locale": "en",
         "video_vuid": "CaGHsWoMJxMGUDasbB",
-        "sub_link_codes": [
+            "sub_link_codes": [
             "playlist_defaultsolo",
             "playlist_defaultduo",
             "playlist_trios",
-            "playlist_defaultsquad"
+            "playlist_defaultsquad",
+            "playlist_showdownalt_solo",
+            "playlist_showdownalt_duos",
+            "playlist_showdownalt_trios"
         ],
         "alt_title": {
             "de": "Battle Royale",
