@@ -1,92 +1,89 @@
 # Nexa 3551 (fork)
-Its jus a nexa backen with my additions and adjustments.
+
+This is a fork of the Nexa backend with my additions, fixes, and configuration tweaks.
 
 <details>
+<summary>Features added by me</summary>
 
-<summary>Features added by me.</summary>
-These features are might not be the best and suff i will make them better in a diffrent time period.
+These additions are works-in-progress; I'll continue improving them over time.
 
-
-   <details>
-
+<details>
 <summary>MatchMaker</summary>
-S3+  support (kinda)
+
+- S3+ support (partial)
 
 **Tested versions:**
-- 23.10 | Works
-- 23.50 | Works
-- 27.11 | Works
-soon more
-
-   </details>
-
+- 23.10 — Works
+- 23.50 — Works
+- 27.11 — Works
+- 24.20 - Doesnt work for now
+- 25.20 - Doesnt work for now
 
 
-   <details>
+
+</details>
+
+<details>
 <summary>Discovery</summary>
 
-- Loaded the Arena playlist for 24.20+ (Should work/show well).
-- Fixed some discovery issues.
-- Made discovery a bit more proper (still in my learning phase).
+- Added Arena playlist support for 24.20+.
+- Fixed several discovery issues and improved overall behavior.
 
-   </details>
+</details>
 
-
-
-   <details>
+<details>
 <summary>Configs</summary>
-Soon.
 
-- Added the **WaterStorm** timeline  config for v12.61 (Chap2 S2).
-- Added **MatchMaker** Port, Ip  configs.
-- Added a **DevelopmentServerPort** config.
+- Added `WaterStorm` timeline config for v12.61 (Chapter 2, Season 2).
+- Added MatchMaker `port` and `ip` configs.
+- Added `DevelopmentServerPort` config.
 
-
-   </deatils>
+</details>
 
 </details>
 
 ### About Nexa
-Origial info below 
+
+The original Nexa project provides a private-server backend implementation. The original README is included below for reference.
 
 <details>
-<summary>Original info. / About Nexa</summary>
+<summary>Original info / About Nexa</summary>
 
+If you want to contribute, fork this repository and make a pull request.
 
-If you want to contribute just fork this repository and make a pull request!
+Join the Discord server for support: https://discord.gg/nexa-1229545680641462282
 
-> [!TIP]
-> Join the discord server for support! https://discord.gg/nexa-1229545680641462282
+> Warning: We do not accept any liability for misuse. Epic Games prohibits the presence of cosmetics not purchased from the official item shop on private servers; using those may breach the game's EULA.
 
-> [!WARNING]
-> We do not accept any liability for the misuse of this program. Epic Games strictly prohibits the presence of cosmetics not bought from the game's official item shop on private servers, as it breaches the End User License Agreement (EULA).
-
-## Todo
+## TODO
 
 - Complete MCP
 
-To install bun go [here](https://bun.sh/docs/installation)
+## Installation
 
-To install dependencies:
+Install Bun: https://bun.sh/docs/installation
+
+Install dependencies:
 
 ```bash
 bun install
 ```
 
-To run:
+Run the server (development):
 
 ```bash
 bun run src/index.ts
 ```
 
-# Used API's
+## APIs
 
-<img src="https://api.nitestats.com/v1/static/ns-logo.png" width="15" title="NiteStats-API"> [NiteStats API](https://nitestats.com/)
+Used APIs:
 
-# Credits
+- ![NiteStats logo](https://api.nitestats.com/v1/static/ns-logo.png) [NiteStats API](https://nitestats.com/)
 
-- [Hybrid](https://github.com/HybridFNBR) for Discovery for 26.30+ and MOTD
+## Credits
 
-- [Zetax](https://github.com/simplyzetax) for Error responses
+- [Hybrid](https://github.com/HybridFNBR) — Discovery for 26.30+ and MOTD
+- [Zetax](https://github.com/simplyzetax) — Error responses
 
-</deatils>
+</details>
