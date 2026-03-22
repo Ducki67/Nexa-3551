@@ -18,7 +18,7 @@ S3+  support (kinda)
 - 27.11 | Works
 soon more
 
-</details>
+   </details>
 
 
 
@@ -29,7 +29,7 @@ soon more
 - Fixed some discovery issues.
 - Made discovery a bit more proper (still in my learning phase).
 
-</details>
+   </details>
 
 
 
@@ -42,8 +42,9 @@ Soon.
 - Added a **DevelopmentServerPort** config.
 
 
-</deatils>
+   </deatils>
 
+</details>
 
 <summary>Original info. / About Nexa</summary>
 
