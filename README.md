@@ -3,13 +3,13 @@ Its jus a nexa backen with my additions and adjustments.
 
 <details>
 
-<summary>**Features added by me.**</summary>
+<summary>Features added by me.</summary>
 These features are might not be the best and suff i will make them better in a diffrent time period.
 
 
    <details>
 
-<summary>**MatchMaker**</summary>
+<summary>MatchMaker</summary>
 S3+  support (kinda)
 
 **Tested versions:**
@@ -23,7 +23,7 @@ soon more
 
 
    <details>
-<summary>**Discovery**</summary>
+<summary>Discovery</summary>
 
 - Loaded the Arena playlist for 24.20+ (Should work/show well).
 - Fixed some discovery issues.
@@ -34,7 +34,7 @@ soon more
 
 
    <details>
-<summary>**Configs**</summary>
+<summary>Configs</summary>
 Soon.
 
 - Added the **WaterStorm** timeline  config for v12.61 (Chap2 S2).
@@ -42,11 +42,10 @@ Soon.
 - Added a **DevelopmentServerPort** config.
 
 
+</deatils>
 
-<deatils>
 
-
-<summary>**Original info. / About Nexa**</summary>
+<summary>Original info. / About Nexa</summary>
 
 
 If you want to contribute just fork this repository and make a pull request!
