@@ -46,6 +46,10 @@ Soon.
 
 </details>
 
+### About Nexa
+Origial info below 
+
+<details>
 <summary>Original info. / About Nexa</summary>
 
 
