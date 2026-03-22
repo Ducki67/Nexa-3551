@@ -1,8 +1,53 @@
-# Nexa
+# Nexa 3551 (fork)
+Its jus a nexa backen with my additions and adjustments.
 
-Nexa is a Fortnite backend for all versions of fortnite!
+<details>
 
-This will be finished during my free time
+<summary>**Features added by me.**</summary>
+These features are might not be the best and suff i will make them better in a diffrent time period.
+
+
+   <details>
+
+<summary>**MatchMaker**</summary>
+S3+  support (kinda)
+
+**Tested versions:**
+- 23.10 | Works
+- 23.50 | Works
+- 27.11 | Works
+soon more
+
+</details>
+
+
+
+   <details>
+<summary>**Discovery**</summary>
+
+- Loaded the Arena playlist for 24.20+ (Should work/show well).
+- Fixed some discovery issues.
+- Made discovery a bit more proper (still in my learning phase).
+
+</details>
+
+
+
+   <details>
+<summary>**Configs**</summary>
+Soon.
+
+- Added the **WaterStorm** timeline  config for v12.61 (Chap2 S2).
+- Added **MatchMaker** Port, Ip  configs.
+- Added a **DevelopmentServerPort** config.
+
+
+
+<deatils>
+
+
+<summary>**Original info. / About Nexa**</summary>
+
 
 If you want to contribute just fork this repository and make a pull request!
 
@@ -39,3 +84,5 @@ bun run src/index.ts
 - [Hybrid](https://github.com/HybridFNBR) for Discovery for 26.30+ and MOTD
 
 - [Zetax](https://github.com/simplyzetax) for Error responses
+
+</deatils>
