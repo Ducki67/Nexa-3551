@@ -58,6 +58,8 @@ Join the Discord server for support: https://discord.gg/nexa-1229545680641462282
 ## TODO
 
 - Complete MCP
+- Fix s12 locker
+- fix a bit of XMPP
 
 ## Installation
 
